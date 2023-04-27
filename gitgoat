@@ -1,45 +1,26 @@
-#!/bin/sh -e
-
-# -p	-- populate -- turn \%ID%
-# -i	-- identify -- print \%ID% for each file specified, binay or not
-# -s	-- strip -- turn \%ID%
+#!/bin/sh
 
 # store $@ into argv
 argv=$@
 
-# %ID%
 
 gg_p() {
 	# populate
-	# turn \%\ID\% into \%\ID <git ls-files --full-name -s (the file)>\%
 	# for each file in $argv, except the first two
 	for file in ${argv[@]:2}
 	do
 		idcontent="$(git log -n 1 --pretty=format:%H -- "$file" | tr -d '\n' && git ls-files --full-name -s "$file" | tr -d '\n')"
 
-		sed -e "s/\%\ID.*\%/\%\ID $idcontent \%/g" -i '' "$file"
+		sed -e "s|\\$\Git.*\\$|\\$\Git: $idcontent \\$|g" -i '' "$file"
 	done
-}
-	
-gg_i() {
-	# identify
-	# print strings beginning with \%\ID and ending with \% for each file specified. do not print the full line
-	# for each file in $argv, except the first two
-	# use strings(1)
-	for file in ${argv[@]:2}
-	do
-		strings "$file" | grep -o "\%ID%"
-	done
-
 }
 
 gg_s() {
 	# strip
-	# turn \%\ID *\% into \%\ID\%
 	# for each file in $argv, except the first two
 	for file in ${argv[@]:2}
 	do
-		sed -e "s/\%\ID.*\%/\%\ID\%/g" -i '' "$file"
+		sed -e "s|\\$\Git.*\\$|\\$\Git\\$|g" -i '' "$file"
 	done
 }
 
@@ -48,14 +29,11 @@ case $1 in
 	-p)
 		gg_p
 		;;
-	-i)
-		gg_i
-		;;
 	-s)
 		gg_s
 		;;
 	*)
-		echo "Usage: gitgoat [-p|-i|-s] [file1] [file2] ..."
+		echo "Usage: gitgoat [-p|-s] [file1] [file2] ..."
 		;;
 esac
 

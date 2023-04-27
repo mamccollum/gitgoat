@@ -20,19 +20,31 @@ $ ident /bin/cat
      $NetBSD: crtn.S,v 1.1 2010/08/07 18:01:34 joerg Exp $
 ```
 
-# Usage
+## Dependencies
+- `git`
+- `sed`
+- GNU `grep` (BSD/macOS users: your standard `grep` is **NOT** supported!)
+
+## Usage
 See `man gitgoat` for detailed usage information.
 
 ## Adding keywords
 To add keywords to a file, create a variable that won't be removed upon compilation. For example, in C, you could use:
 ```c
-const char *gitid = "%ID%";
+const char *gitid = "$Git$";
 ```
 
 Then, use `gitgoat -p <files(s)>`, ex. `gitgoat -p foobar.c`. This will replace the comment with something like this:
 ```c
-const char *gitid = "%ID %";
+const char *gitid = "$Git: 265933eba2ee713d7d6c1f293119e53c59635b13100644 d0627df69573d05d16bdf463691b85d419f10e95 0	src/bracket.c $";
 ```
+
+## Stripping keywords
+To strip keywords from a file, use `gitgoat -s <file(s)>`, ex. `gitgoat -s foobar.c`. This will remove the keywords and restore the keywords to simply be `$Git$`.
+
+## Searching for keywords in a binary
+To search for keywords in a binary, use `ident <file>`. This will show you the keywords in the binary.
+Note that some binaries might use RCS or CVS keywords. which have the same `$` prefix. To hide non-GitGoat keywords, use `ident <file> | grep -v '$Git$'`.
 
 ## Notes
 This tool is designed to do one thing and one thing well: Create & search for keywords.
