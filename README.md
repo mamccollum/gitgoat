@@ -25,9 +25,6 @@ $ ident /bin/cat
 - `sed`
 - `tar` and `gzip`
 
-## Usage
-See `man gitgoat` for detailed usage information.
-
 ## Adding keywords
 To add keywords to a file, create a variable that won't be removed upon compilation. For example, in C, you could use:
 ```c
