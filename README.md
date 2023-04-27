@@ -29,9 +29,9 @@ To add keywords to a file, create a variable that won't be removed upon compilat
 const char *gitid = "%ID%";
 ```
 
-Then, use `gitgoat prep <files(s)>`, ex. `gitgoat prep foobar.c`. This will replace the comment with something like this:
+Then, use `gitgoat -p <files(s)>`, ex. `gitgoat -p foobar.c`. This will replace the comment with something like this:
 ```c
-const char *gitid = "%ID foobar.c cc16f9aad12cf01e5865b557eeef643e23807ee2%";
+const char *gitid = "%ID %";
 ```
 
 ## Notes

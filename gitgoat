@@ -17,7 +17,7 @@ gg_p() {
 	do
 		idcontent="$(git log -n 1 --pretty=format:%H -- "$file" | tr -d '\n' && git ls-files --full-name -s "$file" | tr -d '\n')"
 
-		sed -i '' "s/\%\ID.*\%/\%\ID $idcontent \%/g" "$file"
+		sed -e "s/\%\ID.*\%/\%\ID $idcontent \%/g" -i '' "$file"
 	done
 }
 	
@@ -39,7 +39,7 @@ gg_s() {
 	# for each file in $argv, except the first two
 	for file in ${argv[@]:2}
 	do
-		sed -i '' "s/\%\ID.*\%/\%\ID\%/g" "$file"
+		sed -e "s/\%\ID.*\%/\%\ID\%/g" -i '' "$file"
 	done
 }
 
