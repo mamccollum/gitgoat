@@ -1,8 +1,10 @@
 #!/bin/sh
 
+# Git ID
+# $Git$
+
 # store $@ into argv
 argv=$@
-
 
 gg_p() {
 	# populate
@@ -24,6 +26,17 @@ gg_s() {
 	done
 }
 
+gg_a() {
+	# git-archive after populating
+	# for each file in `git ls-files --full-name`, except the first two
+	for file in $(git ls-files --full-name); do
+		idcontent="$(git log -n 1 --pretty=format:%H -- "$file" | tr -d '\n' && git ls-files --full-name -s "$file" | tr -d '\n')"
+
+		sed -e "s|\\$\Git.*\\$|\\$\Git: $idcontent \\$|g" -i '' "$file"
+	done
+	git archive --format=tar --prefix="$(basename $(git rev-parse --show-toplevel))/" HEAD | gzip > "$(basename $(git rev-parse --show-toplevel)).tar.gz"
+}
+
 # parse args
 case $1 in
 	-p)
@@ -32,8 +45,11 @@ case $1 in
 	-s)
 		gg_s
 		;;
+	-a)
+		gg_a
+		;;
 	*)
-		echo "Usage: gitgoat [-p|-s] [file1] [file2] ..."
+		echo "Usage: gitgoat [-p|-s|-a] [file1] [file2] ..."
 		;;
 esac
 
