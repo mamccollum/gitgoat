@@ -23,7 +23,7 @@ $ ident /bin/cat
 ## Dependencies
 - `git`
 - `sed`
-- GNU `grep` (BSD/macOS users: your standard `grep` is **NOT** supported!)
+- `tar` and `gzip`
 
 ## Usage
 See `man gitgoat` for detailed usage information.
