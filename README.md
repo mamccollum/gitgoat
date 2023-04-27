@@ -48,5 +48,5 @@ This tool is designed to do one thing and one thing well: Create & search for ke
 A good example of how to properly use this tool is to find the commit in question, then use `git blame` to find the author.
 
 ## What's with the name?
-The name was a small gag I came up with, thinking about "blaming" someone or a commit for a bug. Something like that...
+The name was a small gag I came up with, thinking about "blaming" someone or a commit for a bug as a scapegoat. Something like that...
 
