@@ -1,0 +1,62 @@
+#!/bin/sh -ex
+
+# -p	-- populate -- turn %ID% into %ID <git ls-files --full-name -s (the file)>%
+# -i	-- identify -- print %ID *% for each file specified, binay or not
+# -s	-- strip -- turn %ID *% into %ID%
+
+# store $@ and $# into argv and argc
+argv=$@
+argc=$#
+
+# %ID%
+
+gg_p() {
+	# populate
+	# turn %ID% into %ID <git ls-files --full-name -s (the file)>%
+	# for each file in $argv, except the first two
+	for file in ${argv[@]:2}
+	do
+		idcontent=$(git ls-files --full-name -s "$file")
+		sed -i "s/%ID%/%ID $idcontent%/g" "$file"
+	done
+}
+	
+gg_i() {
+	# identify
+	# print strings beginning with %ID and ending with % for each file specified. do not print the full line
+	# for each file in $argv, except the first two
+	# use strings(1)
+	for file in ${argv[@]:2}
+	do
+		strings "$file" | grep -o "%ID.*%"
+	done
+
+}
+
+gg_s() {
+	# strip
+	# turn %ID *% into %ID%
+	# for each file in $argv, except the first two
+	for file in ${argv[@]:2}
+	do
+		sed -i '' "s/%ID\(.*\)%/%ID%/g" "$file"
+	done
+}
+
+# parse args
+case $1 in
+	-p)
+		gg_p
+		;;
+	-i)
+		gg_i
+		;;
+	-s)
+		gg_s
+		;;
+	*)
+		echo "Usage: gitgoat [-p|-i|-s] [file1] [file2] ..."
+		;;
+esac
+
+# end of file
