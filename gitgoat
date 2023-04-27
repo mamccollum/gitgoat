@@ -27,14 +27,24 @@ gg_s() {
 }
 
 gg_a() {
-	# git-archive after populating
+	# archive as tar/gz after populating
 	# for each file in `git ls-files --full-name`, except the first two
 	for file in $(git ls-files --full-name); do
 		idcontent="$(git log -n 1 --pretty=format:%H -- "$file" | tr -d '\n' && git ls-files --full-name -s "$file" | tr -d '\n')"
 
 		sed -e "s|\\$\Git.*\\$|\\$\Git: $idcontent \\$|g" -i '' "$file"
 	done
-	git archive --format=tar --prefix="$(basename $(git rev-parse --show-toplevel))/" HEAD | gzip > "$(basename $(git rev-parse --show-toplevel)).tar.gz"
+	# mktemp -d then copy $(git ls-files --full-name) into it
+	tmpdir=$(mktemp -d)
+	mkdir -p $tmpdir/$(basename $(git rev-parse --show-toplevel))
+	# mkdir for loop using dirname (create subdir with name of repo)
+	for file in $(git ls-files --full-name); do
+		mkdir -p $tmpdir/$(basename $(git rev-parse --show-toplevel))/$(dirname $file)
+		cp $(git rev-parse --show-toplevel)/$file $tmpdir/$(basename $(git rev-parse --show-toplevel))/$file
+	done
+
+	tar -czvf $(basename $(git rev-parse --show-toplevel).tar.gz) -C $tmpdir .
+	rm -rf $tmpdir
 }
 
 # parse args
